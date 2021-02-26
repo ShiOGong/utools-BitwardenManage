@@ -143,8 +143,10 @@ function unlockSelectInput(unlockTitle, callbackSetList) {
 
 }
 
-function unlockAndShowData(password, callbackSetList) {
-    unlock(password)
+function unlockAndShowData(password, callbackSetList, unlockAction = true) {
+    if (unlockAction) {
+        unlock(password);
+    }
 
     itemsData = syncItemToSetList(itemToSetList(getAllItems()))
     callbackSetList(itemsData)
@@ -180,10 +182,11 @@ function clearShow(message, callbackSetList) {
 }
 
 function sync() {
-    console.log('function unlock')
+    console.log('function sync')
     let cmd;
     try {
-        cmd = 'bw sync --session' + session
+        cmd = 'bw sync --session ' + session
+        console.log(cmd)
         let data = child.execSync(cmd).toString();
         console.log(data)
     } catch (e) {
@@ -301,12 +304,47 @@ window.exports = {
                     quit()
                 }
                 if (itemData.title === syncInputTitles.sync) {
+                    clearShow('同步中,请稍等', callbackSetList);
                     sync();
-                    quit()
+                    // unlocak过了 无需unlock
+                    unlockAndShowData(password, callbackSetList, false)
                 }
             },
         }
     },
+    "random": { // 注意：键对应的是 plugin.json 中的 features.code
+        mode: "list",  // 用于无需 UI 显示，执行一些简单的代码
+        args: {
+            // 进入插件时调用
+            enter: (action, callbackSetList) => {
+                // 选择密码模式
+                randomInitInput(callbackSetList)
+            },
+
+            select: (action, itemData, callbackSetList) => {
+                // 选择密码模式
+                let randomPass
+                switch (itemData.title) {
+                    case randomInputTitles.number:
+                        randomPass = randomPassGenerate('n', randomPassLength);
+                        randomCopyPassInput(randomPass, callbackSetList);
+                        break;
+                    case randomInputTitles.number_case:
+                        randomPass = randomPassGenerate('uln', randomPassLength);
+                        randomCopyPassInput(randomPass, callbackSetList);
+                        break;
+                    case randomInputTitles.number_case_special:
+                        randomPass = randomPassGenerate('ulns', randomPassLength);
+                        randomCopyPassInput(randomPass, callbackSetList);
+                        break;
+                    case randomInputTitles.random_copy_pass:
+                        utools.copyText(itemData.data)
+                        quit();
+                        break;
+                }
+            },
+        }
+    }
 }
 
 function unlock(password) {
@@ -405,42 +443,6 @@ let randomPassLength = 12
 function randomPassGenerate(randomPassModel, randomPassLength) {
     let cmd = 'bw generate -' + randomPassModel + ' --length ' + randomPassLength
     return child.execSync(cmd).toString();
-}
-
-window.exports = {
-    "random": { // 注意：键对应的是 plugin.json 中的 features.code
-        mode: "list",  // 用于无需 UI 显示，执行一些简单的代码
-        args: {
-            // 进入插件时调用
-            enter: (action, callbackSetList) => {
-                // 选择密码模式
-                randomInitInput(callbackSetList)
-            },
-
-            select: (action, itemData, callbackSetList) => {
-                // 选择密码模式
-                let randomPass
-                switch (itemData.title) {
-                    case randomInputTitles.number:
-                        randomPass = randomPassGenerate('n', randomPassLength);
-                        randomCopyPassInput(randomPass, callbackSetList);
-                        break;
-                    case randomInputTitles.number_case:
-                        randomPass = randomPassGenerate('uln', randomPassLength);
-                        randomCopyPassInput(randomPass, callbackSetList);
-                        break;
-                    case randomInputTitles.number_case_special:
-                        randomPass = randomPassGenerate('ulns', randomPassLength);
-                        randomCopyPassInput(randomPass, callbackSetList);
-                        break;
-                    case randomInputTitles.random_copy_pass:
-                        utools.copyText(itemData.data)
-                        quit();
-                        break;
-                }
-            },
-        }
-    },
 }
 
 function randomInitInput(callbackSetList) {
