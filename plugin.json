@@ -1,0 +1,29 @@
+{
+  "pluginName": "BitwardenManager",
+  "description": "Bitwarden的管理插件",
+  "version": "0.0.1",
+  "logo": "bitwarden.png",
+  "preload": "preload.js",
+  "author": "ShiO(shiogong@qq.com)",
+  "homepage": "",
+  "platform": [
+    "darwin",
+    "linux"
+  ],
+  "features": [
+    {
+      "code": "pass",
+      "explain": "Bitwarden的密码管理插件",
+      "cmds": [
+        "pass"
+      ]
+    },
+    {
+      "code": "random",
+      "explain": "生成随机密码",
+      "cmds": [
+        "random"
+      ]
+    }
+  ]
+}
