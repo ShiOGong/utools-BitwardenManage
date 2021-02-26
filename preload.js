@@ -103,9 +103,15 @@ let syncInputTitles = {
 }
 
 function syncItemToSetList(itemsData) {
+    let lastSyncUTCDate = syncLastDate();
+
+    let date = new Date(lastSyncUTCDate);
+    lastSyncDate = date.toLocaleString();
+
+    console.log(lastSyncDate);
     itemsData.unshift({
         'title': syncInputTitles.sync,
-        'description': '同步密码库中的项目'
+        'description': '最后同步时间:' + lastSyncDate
     })
     return itemsData;
 }
@@ -157,10 +163,12 @@ function unlockAndShowData(password, callbackSetList, unlockAction = true) {
         unlock(password);
     }
 
-    itemsData = syncItemToSetList(itemToSetList(getAllItems()))
-    callbackSetList(itemsData)
+    sleep(100).then(() => {
+        itemsData = syncItemToSetList(itemToSetList(getAllItems()))
+        callbackSetList(itemsData)
 
-    itemSearchSelectInput(callbackSetList)
+        itemSearchSelectInput(callbackSetList)
+    })
 }
 
 function quit(message = false) {
@@ -295,7 +303,7 @@ window.exports = {
                     console.log(twoStepCode);
                     clearShow('请稍后', callbackSetList);
 
-                    sleep(1).then(() => {
+                    sleep(100).then(() => {
                         login(email, password, twoStepCode)
 
                         // unlockAndShowData(password, callbackSetList)
@@ -322,7 +330,7 @@ window.exports = {
                 if (itemData.title === syncInputTitles.sync) {
                     clearShow('同步中,请稍后', callbackSetList);
 
-                    sleep(1).then(() => {
+                    sleep(100).then(() => {
                         sync();
                         // unlocak过了 无需unlock
                         unlockAndShowData(password, callbackSetList, false)
@@ -381,6 +389,15 @@ window.exports = {
             },
         }
     }
+}
+
+let lastSyncDate
+
+function syncLastDate() {
+    console.log('function syncLastDate')
+    let cmd = 'bw sync --session ' + session + ' --last'
+    console.log(cmd)
+    return child.execSync(cmd).toString()
 }
 
 function unlock(password) {
