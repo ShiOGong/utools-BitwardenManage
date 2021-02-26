@@ -171,7 +171,7 @@ function unlockAndShowData(password, callbackSetList, unlockAction = true) {
     })
 }
 
-function quit(message = false) {
+function quit(message = false, hideMainWindow = true) {
     // 安全起见 清空密码
     if (message) {
         alert(message);
@@ -182,6 +182,9 @@ function quit(message = false) {
     // 变量初始化
     randomPassLength = 12;
 
+    if (hideMainWindow) {
+        window.utools.hideMainWindow();
+    }
     window.utools.outPlugin()
 }
 
@@ -288,11 +291,11 @@ window.exports = {
                     if (!towStepMode) {
                         sleep(1).then(() => {
                             if (!login(email, password, false)) {
-                                quit('登录失败!')
+                                quit('登录失败!', false)
                             }
 
                             // unlockAndShowData(password, callbackSetList)
-                            quit('登录成功,请重新进入插件');
+                            quit('登录成功,请重新进入插件', false);
                         })
                     } else {
                         twoStepSelectInput(twoStepTitle, callbackSetList)
@@ -307,7 +310,7 @@ window.exports = {
                         login(email, password, twoStepCode)
 
                         // unlockAndShowData(password, callbackSetList)
-                        quit('登录成功,请重新进入插件')
+                        quit('登录成功,请重新进入插件', false)
                     })
                 }
 
@@ -341,7 +344,7 @@ window.exports = {
 
                     sleep(1).then(() => {
                         logout();
-                        quit()
+                        quit(false, false)
                     })
                 }
             },
@@ -439,7 +442,7 @@ function login(email, password, twoStepCode = false) {
             if (error !== null) {
                 if (stderr.indexOf("Two-step token is invalid.")) {
                     console.log('二步验证码输入错误');
-                    quit('二步验证码输入错误')
+                    quit('二步验证码输入错误', false)
                 }
 
                 loginFlag = false;
