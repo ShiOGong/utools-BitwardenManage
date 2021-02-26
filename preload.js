@@ -126,6 +126,10 @@ function itemToSetList(itemsData) {
     return selectListItems
 }
 
+let logoutInputTitles = {
+    'logout': '退出登录'
+}
+
 function unlockSelectInput(unlockTitle, callbackSetList) {
     utools.removeSubInput();
 
@@ -137,6 +141,11 @@ function unlockSelectInput(unlockTitle, callbackSetList) {
         {
             title: unlockTitle,
             description: '输入主密码解锁',
+            icon: '', // 图标(可选)
+        },
+        {
+            title: logoutInputTitles.logout,
+            description: '退出登录状态',
             icon: '', // 图标(可选)
         },
     ])
@@ -192,6 +201,13 @@ function sync() {
     } catch (e) {
 
     }
+}
+
+function logout() {
+    let cmd = 'bw logout'
+    console.log(cmd)
+    let data = child.execSync(cmd).toString();
+    console.log(data)
 }
 
 window.exports = {
@@ -310,6 +326,14 @@ window.exports = {
                         sync();
                         // unlocak过了 无需unlock
                         unlockAndShowData(password, callbackSetList, false)
+                    })
+                }
+                if (itemData.title === logoutInputTitles.logout) {
+                    clearShow('退出中', callbackSetList);
+
+                    sleep(1).then(() => {
+                        logout();
+                        quit()
                     })
                 }
             },
