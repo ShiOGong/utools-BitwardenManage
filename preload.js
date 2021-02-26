@@ -98,6 +98,18 @@ function getAllItems() {
     return dataObj
 }
 
+let syncInputTitles = {
+    'sync': '同步密码库'
+}
+
+function syncItemToSetList(itemsData) {
+    itemsData.unshift({
+        'title': syncInputTitles.sync,
+        'description': '同步密码库中的项目'
+    })
+    return itemsData;
+}
+
 function itemToSetList(itemsData) {
     let selectListItems = [];
 
@@ -134,7 +146,7 @@ function unlockSelectInput(unlockTitle, callbackSetList) {
 function unlockAndShowData(password, callbackSetList) {
     unlock(password)
 
-    itemsData = itemToSetList(getAllItems())
+    itemsData = syncItemToSetList(itemToSetList(getAllItems()))
     callbackSetList(itemsData)
 
     itemSearchSelectInput(callbackSetList)
@@ -165,6 +177,18 @@ function clearShow(message, callbackSetList) {
             icon: '', // 图标(可选)
         },
     ])
+}
+
+function sync() {
+    console.log('function unlock')
+    let cmd;
+    try {
+        cmd = 'bw sync --session' + session
+        let data = child.execSync(cmd).toString();
+        console.log(data)
+    } catch (e) {
+
+    }
 }
 
 window.exports = {
@@ -274,6 +298,10 @@ window.exports = {
 
                     utools.copyText(itemData.data)
 
+                    quit()
+                }
+                if (itemData.title === syncInputTitles.sync) {
+                    sync();
                     quit()
                 }
             },

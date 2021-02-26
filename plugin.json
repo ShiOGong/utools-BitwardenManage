@@ -1,7 +1,7 @@
 {
   "pluginName": "BitwardenManager",
   "description": "Bitwarden的管理插件",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "logo": "bitwarden.png",
   "preload": "preload.js",
   "author": "ShiO(shiogong@qq.com)",
