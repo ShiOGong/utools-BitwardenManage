@@ -106,7 +106,7 @@ function syncItemToSetList(itemsData) {
     let lastSyncUTCDate = syncLastDate();
 
     let date = new Date(lastSyncUTCDate);
-    lastSyncDate = date.toLocaleString();
+    lastSyncDate = GetFormattedDate(date);
 
     console.log(lastSyncDate);
     itemsData.unshift({
@@ -163,7 +163,7 @@ function unlockAndShowData(password, callbackSetList, unlockAction = true) {
         unlock(password);
     }
 
-    sleep(100).then(() => {
+    sleep(50).then(() => {
         itemsData = syncItemToSetList(itemToSetList(getAllItems()))
         callbackSetList(itemsData)
 
@@ -317,7 +317,7 @@ window.exports = {
                 if (itemData.title === '请输入主密码') {
                     clearShow('请稍后', callbackSetList);
 
-                    sleep(100).then(() => {
+                    sleep(50).then(() => {
                         unlockAndShowData(password, callbackSetList)
                     })
                 }
@@ -394,7 +394,7 @@ window.exports = {
     }
 }
 
-let lastSyncDate
+let lastSyncDate = '未获取'
 
 function syncLastDate() {
     console.log('function syncLastDate')
@@ -539,3 +539,14 @@ function randomCopyPassInput(password, callbackSetList) {
         },
     ])
 }
+
+function GetFormattedDate(date) {
+    let month = ("0" + (date.getMonth() + 1)).slice(-2);
+    let day = ("0" + (date.getDate())).slice(-2);
+    let year = date.getFullYear();
+    let hour = ("0" + (date.getHours())).slice(-2);
+    let min = ("0" + (date.getMinutes())).slice(-2);
+    let seg = ("0" + (date.getSeconds())).slice(-2);
+    return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + seg;
+}
+
