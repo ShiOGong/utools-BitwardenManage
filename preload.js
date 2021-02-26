@@ -205,35 +205,32 @@ window.exports = {
 
                 // action = { code, type, payload }
                 // window.utools.hideMainWindow()
-                let checkLoginFlagObj = checkLogin()
-                let unlockTitle;
+                clearShow('请稍后', callbackSetList)
 
+                sleep(100).then(() => {
+                    let checkLoginFlagObj = checkLogin()
+                    let unlockTitle;
 
-                if (!checkLoginFlagObj.flag) {
-                    callbackSetList([
-                        {
-                            title: '账号已开启二步验证',
-                            description: '尚未登录,请登录',
-                            icon: '', // 图标(可选)
-                        },
-                        {
-                            title: '账号未开启二步验证',
-                            description: '尚未登录,请登录',
-                            icon: '', // 图标(可选)
-                        },
-                    ])
-                } else {
-                    if (checkLoginFlagObj.status === 'locked') {
-                        unlockTitle = '请输入主密码'
-                        unlockSelectInput(unlockTitle, callbackSetList)
+                    if (!checkLoginFlagObj.flag) {
+                        callbackSetList([
+                            {
+                                title: '账号已开启二步验证',
+                                description: '尚未登录,请登录',
+                                icon: '', // 图标(可选)
+                            },
+                            {
+                                title: '账号未开启二步验证',
+                                description: '尚未登录,请登录',
+                                icon: '', // 图标(可选)
+                            },
+                        ])
+                    } else {
+                        if (checkLoginFlagObj.status === 'locked') {
+                            unlockTitle = '请输入主密码'
+                            unlockSelectInput(unlockTitle, callbackSetList)
+                        }
                     }
-
-                    if (checkLoginFlagObj.status === 'unlock') {
-                        itemsData = itemToSetList(getAllItems())
-
-                        callbackSetList(itemsData);
-                    }
-                }
+                })
             },
             select: (action, itemData, callbackSetList) => {
                 // const url = itemData.title
@@ -265,15 +262,14 @@ window.exports = {
                     console.log('towStepMode:', towStepMode);
 
                     if (!towStepMode) {
-                        clearShow('请稍等...', callbackSetList)
+                        sleep(1).then(() => {
+                            if (!login(email, password, false)) {
+                                quit('登录失败!')
+                            }
 
-                        if (!login(email, password, false)) {
-                            quit('登录失败!')
-                        }
-
-                        // unlockAndShowData(password, callbackSetList)
-                        quit('登录成功,请重新进入插件');
-
+                            // unlockAndShowData(password, callbackSetList)
+                            quit('登录成功,请重新进入插件');
+                        })
                     } else {
                         twoStepSelectInput(twoStepTitle, callbackSetList)
                     }
@@ -281,18 +277,22 @@ window.exports = {
 
                 if (itemData.title === twoStepTitle && twoStepCode !== '' && towStepMode === true) {
                     console.log(twoStepCode);
-                    clearShow('请稍等...', callbackSetList);
+                    clearShow('请稍后', callbackSetList);
 
-                    login(email, password, twoStepCode)
+                    sleep(1).then(() => {
+                        login(email, password, twoStepCode)
 
-                    // unlockAndShowData(password, callbackSetList)
-                    quit('登录成功,请重新进入插件')
+                        // unlockAndShowData(password, callbackSetList)
+                        quit('登录成功,请重新进入插件')
+                    })
                 }
 
                 if (itemData.title === '请输入主密码') {
-                    clearShow('请稍等...', callbackSetList);
+                    clearShow('请稍后', callbackSetList);
 
-                    unlockAndShowData(password, callbackSetList)
+                    sleep(100).then(() => {
+                        unlockAndShowData(password, callbackSetList)
+                    })
                 }
 
                 console.log(itemData.title.indexOf('项目名:'))
@@ -304,10 +304,13 @@ window.exports = {
                     quit()
                 }
                 if (itemData.title === syncInputTitles.sync) {
-                    clearShow('同步中,请稍等', callbackSetList);
-                    sync();
-                    // unlocak过了 无需unlock
-                    unlockAndShowData(password, callbackSetList, false)
+                    clearShow('同步中,请稍后', callbackSetList);
+
+                    sleep(1).then(() => {
+                        sync();
+                        // unlocak过了 无需unlock
+                        unlockAndShowData(password, callbackSetList, false)
+                    })
                 }
             },
         }
@@ -326,16 +329,25 @@ window.exports = {
                 let randomPass
                 switch (itemData.title) {
                     case randomInputTitles.number:
-                        randomPass = randomPassGenerate('n', randomPassLength);
-                        randomCopyPassInput(randomPass, callbackSetList);
+                        clearShow('生成中,请稍后', callbackSetList);
+                        sleep(1).then(() => {
+                            randomPass = randomPassGenerate('n', randomPassLength);
+                            randomCopyPassInput(randomPass, callbackSetList);
+                        })
                         break;
                     case randomInputTitles.number_case:
-                        randomPass = randomPassGenerate('uln', randomPassLength);
-                        randomCopyPassInput(randomPass, callbackSetList);
+                        clearShow('生成中,请稍后', callbackSetList);
+                        sleep(1).then(() => {
+                            randomPass = randomPassGenerate('uln', randomPassLength);
+                            randomCopyPassInput(randomPass, callbackSetList);
+                        })
                         break;
                     case randomInputTitles.number_case_special:
-                        randomPass = randomPassGenerate('ulns', randomPassLength);
-                        randomCopyPassInput(randomPass, callbackSetList);
+                        clearShow('生成中,请稍后', callbackSetList);
+                        sleep(1).then(() => {
+                            randomPass = randomPassGenerate('ulns', randomPassLength);
+                            randomCopyPassInput(randomPass, callbackSetList);
+                        })
                         break;
                     case randomInputTitles.random_copy_pass:
                         utools.copyText(itemData.data)
