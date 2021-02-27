@@ -30,8 +30,8 @@ function searchItems(keywords, callbackSetList) {
 function itemSearchSelectInput(callbackSetList) {
     utools.removeSubInput();
 
+    searchMode = true
     utools.setSubInput((text) => {
-        searchMode = true
         console.log(text.text)
 
         if (!text.text) {
