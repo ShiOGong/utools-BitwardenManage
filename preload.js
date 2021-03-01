@@ -212,7 +212,7 @@ function sync() {
         let data = child.execSync(cmd).toString();
         console.log(data)
     } catch (e) {
-
+        quit('同步失败,请稍后重试', false);
     }
 }
 
