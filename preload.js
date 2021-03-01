@@ -446,7 +446,7 @@ function login(email, password, twoStepCode = false) {
                     console.log('二步验证码输入错误');
                     quit('二步验证码输入错误', false)
                 }
-                quit('发生错误 请检查输入账户是否正确')
+                quit('发生错误 请检查输入账户是否正确或sh文件配置是否正常[详情请查看插件介绍]')
 
                 loginFlag = false;
             } else {
