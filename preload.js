@@ -468,26 +468,30 @@ function sleep(time) {
 function checkLogin() {
     console.log('function checkLogin')
 
-    let cmd = 'bw status'
-    let data = child.execSync(cmd).toString();
-    console.log(data)
-    const dataObj = JSON.parse(data)
+    try {
+        let cmd = 'bw status'
+        let data = child.execSync(cmd).toString();
+        console.log(data)
+        const dataObj = JSON.parse(data)
 
-    switch (dataObj.status) {
-        case "unauthenticated":
-            console.log('尚未登录')
-            checkLoginFlag = false
-            break;
-        case "locked":
-            console.log('登录未解锁')
-            checkLoginFlag = true
-            break;
-        case "unlock":
-            console.log('登录已解锁')
-            checkLoginFlag = true
-            break;
+        switch (dataObj.status) {
+            case "unauthenticated":
+                console.log('尚未登录')
+                checkLoginFlag = false
+                break;
+            case "locked":
+                console.log('登录未解锁')
+                checkLoginFlag = true
+                break;
+            case "unlock":
+                console.log('登录已解锁')
+                checkLoginFlag = true
+                break;
+        }
+        return {'flag': checkLoginFlag, 'status': dataObj.status};
+    } catch (e) {
+        quit('发生错误 请检查是否安装bw命令行')
     }
-    return {'flag': checkLoginFlag, 'status': dataObj.status};
 }
 
 let randomInputTitles = {
