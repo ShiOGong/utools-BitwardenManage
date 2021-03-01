@@ -32,6 +32,10 @@ function passConstruct() {
     itemsData = [];
 }
 
+function randomConstruct() {
+    randomPassLength = 12;
+}
+
 
 function searchItems(keywords, callbackSetList) {
     let tempData = itemsData.filter(element => {
@@ -188,15 +192,9 @@ function unlockAndShowData(password, callbackSetList, unlockAction = true) {
 }
 
 function quit(message = false, hideMainWindow = true) {
-    // 安全起见 清空密码
-    if (message) {
-        alert(message);
-    }
-    // 变量初始化
-    password = ''
-    session = ''
-    // 变量初始化
-    randomPassLength = 12;
+    // 重新初始化
+    passConstruct();
+    randomConstruct();
 
     if (hideMainWindow) {
         window.utools.hideMainWindow();
@@ -433,7 +431,7 @@ function unlock(password) {
         console.log('stdout:', session);
 
     } catch (e) {
-
+        quit('解锁失败 请重新输入', false);
     }
 
     return unlockFlag
