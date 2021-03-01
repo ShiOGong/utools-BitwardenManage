@@ -10,7 +10,7 @@ let email = '';
 let password = '';
 let twoStepCode = '';
 
-let loginFlag;
+let loginFlag = false;
 let checkLoginFlag = false;
 let unlockFlag = false;
 
@@ -18,6 +18,20 @@ let session = '';
 
 let searchMode = false;
 let itemsData = [];
+
+function passConstruct() {
+    towStepMode = true
+    searchMode = false
+    session = ''
+    email = '';
+    password = '';
+    twoStepCode = '';
+    loginFlag = false;
+    checkLoginFlag = false;
+    unlockFlag = false;
+    itemsData = [];
+}
+
 
 function searchItems(keywords, callbackSetList) {
     let tempData = itemsData.filter(element => {
@@ -230,7 +244,7 @@ window.exports = {
             // 进入插件时调用
             enter: (action, callbackSetList) => {
                 // 初始化
-                searchMode = false
+                passConstruct();
 
                 // action = { code, type, payload }
                 // window.utools.hideMainWindow()
