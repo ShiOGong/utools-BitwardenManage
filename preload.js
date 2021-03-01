@@ -63,8 +63,9 @@ function passSelectInput(title, callbackSetList) {
     utools.removeSubInput();
 
     utools.setSubInput((text) => {
-        password = text.text
-    }, "密码", true)
+        password += text.text
+        utools.setSubInputValue('')
+    }, "主密码[密码已隐藏]", true)
 
     callbackSetList([
         {
@@ -140,8 +141,9 @@ function unlockSelectInput(unlockTitle, callbackSetList) {
     utools.removeSubInput();
 
     utools.setSubInput((text) => {
-        password = text.text
-    }, "主密码", true)
+        password += text.text
+        utools.setSubInputValue('')
+    }, "主密码[密码已隐藏]", true)
 
     callbackSetList([
         {
