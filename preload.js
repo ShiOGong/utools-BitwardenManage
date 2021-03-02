@@ -196,6 +196,10 @@ function quit(message = false, hideMainWindow = true) {
     passConstruct();
     randomConstruct();
 
+    if (message !== false) {
+        alert(message)
+    }
+
     if (hideMainWindow) {
         window.utools.hideMainWindow();
     }
@@ -306,10 +310,11 @@ window.exports = {
                         sleep(1).then(() => {
                             if (!login(email, password, false)) {
                                 quit('登录失败!', false)
+                            } else {
+                                // unlockAndShowData(password, callbackSetList)
+                                quit('登录成功,请重新入插件', false);
                             }
 
-                            // unlockAndShowData(password, callbackSetList)
-                            quit('登录成功,请重新进入插件', false);
                         })
                     } else {
                         twoStepSelectInput(twoStepTitle, callbackSetList)
@@ -321,10 +326,13 @@ window.exports = {
                     clearShow('请稍后', callbackSetList);
 
                     sleep(100).then(() => {
-                        login(email, password, twoStepCode)
+                        if (!login(email, password, twoStepCode)) {
+                            quit('登录失败!', false)
+                        } else {
+                            // unlockAndShowData(password, callbackSetList)
+                            quit('登录成功,请重新进入插件', false)
+                        }
 
-                        // unlockAndShowData(password, callbackSetList)
-                        quit('登录成功,请重新进入插件', false)
                     })
                 }
 
@@ -451,24 +459,26 @@ function login(email, password, twoStepCode = false) {
         cmd = 'bw login ' + email + ' ' + password;
     }
 
-    child.exec(cmd,
-        function (error, stdout, stderr) {
-            if (error !== null) {
-                if (stderr.indexOf("Two-step token is invalid.")) {
-                    console.log('二步验证码输入错误');
-                    quit('二步验证码输入错误', false)
-                }
-                quit('发生错误 请检查输入账户是否正确或sh文件配置是否正常[详情请查看插件介绍]')
+    try {
+        let data = child.execSync(cmd).toString();
 
-                loginFlag = false;
-            } else {
-                if (stdout.indexOf('logged in!')) {
-                    console.log('登录成功');
-                    loginFlag = true;
-                }
-            }
-        });
+        if (data.indexOf("Two-step token is invalid.") !== -1) {
+            console.log('二步验证码输入错误');
+            quit('二步验证码输入错误', false)
+            loginFlag = false;
+            return loginFlag
+        }
 
+        if (data.indexOf('logged in!') !== -1) {
+            console.log('登录成功');
+            loginFlag = true;
+            return loginFlag
+        }
+    } catch (e) {
+        quit('发生错误 请检查输入账户是否正确或sh文件配置是否正常[详情请查看插件介绍]')
+        loginFlag = false;
+        return loginFlag
+    }
     return loginFlag
 }
 
